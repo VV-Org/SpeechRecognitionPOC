@@ -2,6 +2,8 @@ extern crate nalgebra as na;
 
 use na::{Dynamic, VectorN};
 
+pub mod data_viz;
+
 pub fn cost_with_hypothesis(
     inputs: &VectorN<f64, Dynamic>,
     outputs_actual: &VectorN<f64, Dynamic>,
@@ -15,18 +17,9 @@ pub fn cost(
     outputs_actual: &VectorN<f64, Dynamic>,
     outputs_predicted: &VectorN<f64, Dynamic>,
 ) -> f64 {
-    dbg!(&outputs_actual);
     let diff = outputs_actual - outputs_predicted;
-
-    dbg!(&diff);
-    let diff_squared = &diff.component_mul(&diff) ;
-
-    dbg!(&diff_squared);
-
+    let diff_squared = &diff.component_mul(&diff);
     let diff_squared_mean = VectorN::mean(&diff_squared);
-
-    dbg!(&diff_squared_mean);
-
     diff_squared_mean / 2.0
 }
 

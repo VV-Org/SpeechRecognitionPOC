@@ -7,4 +7,11 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-nalgebra = "0.23.2"
+# Math library
+nalgebra = "0.23"
+
+# Nice and beautiful cli helpers
+structopt = "0.3"
+
+# For dataviz
+plotters = "0.3"
