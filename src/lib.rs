@@ -4,6 +4,22 @@ use na::{Dynamic, VectorN};
 
 pub mod data_viz;
 
+pub fn gradient_descent(
+    x: &VectorN<f64, Dynamic>,
+    y: &VectorN<f64, Dynamic>,
+    mut theta: VectorN<f64, Dynamic>,
+    alpha: f64,
+    num_iters: u32,
+) -> VectorN<f64, Dynamic> {
+    let x = x.clone().insert_columns(0, 1, 1.0);
+    let m = y.len() as f64;
+
+    for _ in 1..num_iters {
+        theta = &theta - (alpha / m) * x.transpose() * ((&x * &theta) - y);
+    }
+    theta
+}
+
 pub fn cost_with_hypothesis(
     inputs: &VectorN<f64, Dynamic>,
     outputs_actual: &VectorN<f64, Dynamic>,
