@@ -1,5 +1,5 @@
 use nalgebra::{Dynamic, VectorN};
-use speech_recognition_poc::{data_viz, gradient_descent};
+use speech_recognition_poc::{cost, data_viz, GradientDescent, GradientDescentParameters, Learner};
 use std::fs::File;
 use std::{error::Error, io::Read};
 use structopt::StructOpt;
@@ -21,11 +21,11 @@ pub struct Ex1 {
 // ex1data1.txt and should then output the predicted profit for a population given as argument
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Ex1::from_args();
-    println!("Dataset used: {}", args.dataset);
 
+    println!("Dataset used: {}", args.dataset);
     println!("Target population: {}", args.population);
 
-    let population = args.population/10000.0;
+    let population = args.population / 10000.0;
 
     // Load and prepare data
     let mut file = File::open(args.dataset)?;
@@ -56,18 +56,24 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("Dataset plotted in: {}", path);
 
     // Perform the gradient descent
-    let theta_init: VectorN<f64, Dynamic> = vec![0.0, 0.0].into();
-    let theta = gradient_descent(&inputs, &outputs_actual, theta_init, 0.01, 1500);
+    let params_gd = GradientDescentParameters::new(vec![0.0, 0.0].into(), 0.01, 1500);
+    let theta = GradientDescent::learn(&inputs, &outputs_actual, params_gd);
     println!("θ found after gradient descent: {}", theta);
 
     // Compute prediction
     let x: VectorN<f64, Dynamic> = vec![1.0, population].into();
     let predicted = x.transpose() * &theta;
-    println!("For a city size of {} we predict {:0.2}€ profits", args.population, predicted[(0, 0)]*10000.0 );
-
+    println!(
+        "For a city size of {} we predict {:0.2}€ profits",
+        args.population,
+        predicted[(0, 0)] * 10000.0
+    );
 
     // Print the cost with the found theta
-    // let identity_cost = cost(&outputs_actual, &outputs_predicted);
-    // println!("Cost for identity hypothesis {}", identity_cost);
+    let x = inputs.clone().insert_columns(0, 1, 1.0);
+    let outputs_predicted = x * theta;
+    let identity_cost = cost(&outputs_actual, &outputs_predicted);
+
+    println!("Cost for identity hypothesis {:0.2}", identity_cost);
     Ok(())
 }
