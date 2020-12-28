@@ -13,8 +13,8 @@ pub struct Ex1 {
         long = "dataset"
     )]
     dataset: String,
-    #[structopt(default_value = "35000", short = "p", long = "population")]
-    population: f64,
+    #[structopt(default_value = "35000", short = "p", long = "populations")]
+    populations: Vec<f64>,
 }
 
 // The goal is to be able to call ex1 with as 1st argument the file that contains our dataset like
@@ -23,9 +23,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Ex1::from_args();
 
     println!("Dataset used: {}", args.dataset);
-    println!("Target population: {}", args.population);
+    println!("Target populations: {:?}", args.populations);
 
-    let population = args.population / 10000.0;
+    let populations: Vec<f64> = args.populations.into_iter().map(|p| p/10_000.0).collect();
 
     // Load and prepare data
     let mut file = File::open(args.dataset)?;
@@ -61,17 +61,20 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("θ found after gradient descent: {}", theta);
 
     // Compute prediction
-    let x: VectorN<f64, Dynamic> = vec![1.0, population].into();
-    let predicted = x.transpose() * &theta;
-    println!(
-        "For a city size of {} we predict {:0.2}€ profits",
-        args.population,
-        predicted[(0, 0)] * 10000.0
-    );
+    for population in populations.into_iter(){
+        let x: VectorN<f64, Dynamic> = vec![1.0, population].into();
+        let predicted = x.transpose() * &theta;
+        println!(
+            "For a city size of {} we predict {:0.2}€ profits",
+            population * 10000.0,
+            predicted[(0, 0)] * 10000.0
+        );
+    }
 
     // Print the cost with the found theta
-    let x = inputs.clone().insert_columns(0, 1, 1.0);
-    let outputs_predicted = x * theta;
+    let inputs = inputs.clone().insert_columns(0, 1, 1.0);
+
+    let outputs_predicted = inputs * theta;
     let identity_cost = cost(&outputs_actual, &outputs_predicted);
 
     println!("Cost for identity hypothesis {:0.2}", identity_cost);
