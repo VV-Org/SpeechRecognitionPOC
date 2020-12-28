@@ -14,6 +14,8 @@ pub trait Learner<A> {
     ) -> VectorN<f64, Dynamic>;
 }
 
+pub struct Learners;
+
 pub fn cost(
     outputs_actual: &VectorN<f64, Dynamic>,
     outputs_predicted: &VectorN<f64, Dynamic>,

@@ -1,5 +1,5 @@
 use nalgebra::{Dynamic, VectorN};
-use speech_recognition_poc::{cost, data_viz, GradientDescent, GradientDescentParameters, Learner};
+use speech_recognition_poc::{cost, data_viz, GradientDescentParameters, Learner, Learners};
 use std::fs::File;
 use std::{error::Error, io::Read};
 use structopt::StructOpt;
@@ -57,7 +57,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Perform the gradient descent
     let params_gd = GradientDescentParameters::new(vec![0.0, 0.0].into(), 0.01, 1500);
-    let theta = GradientDescent::learn(&inputs, &outputs_actual, params_gd);
+    let theta = Learners::learn(&inputs, &outputs_actual, params_gd);
     println!("θ found after gradient descent: {}", theta);
 
     // Compute prediction

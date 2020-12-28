@@ -1,4 +1,4 @@
-use crate::Learner;
+use crate::{Learner, Learners};
 use na::{Dynamic, VectorN};
 
 pub struct GradientDescentParameters {
@@ -17,9 +17,7 @@ impl GradientDescentParameters {
     }
 }
 
-pub struct GradientDescent;
-
-impl Learner<GradientDescentParameters> for GradientDescent {
+impl Learner<GradientDescentParameters> for Learners {
     fn learn(
         inputs: &VectorN<f64, Dynamic>,
         outputs: &VectorN<f64, Dynamic>,
